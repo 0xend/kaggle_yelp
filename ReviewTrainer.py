@@ -54,8 +54,7 @@ class ReviewTrainer(TrainerModel):
 		return best_clf
 
 	def train(self):
-		best = self._cross_validate()
-		self.clf = Ridge(alpha=1)
+		self.clf  = self._cross_validate()
 		self.clf.fit(self.feats, self.labels)
 
 	def predict(self, data):

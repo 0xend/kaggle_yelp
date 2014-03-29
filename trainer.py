@@ -10,6 +10,9 @@ from BusinessTrainer import *
 import sys
 import json
 
+FNAME_REVIEWS = u'yelp_training_set_review.json'
+
+
 def load(fname, prep, limit=0):
 	f = open(fname)
 	results = {}
@@ -23,14 +26,13 @@ def load(fname, prep, limit=0):
 				results[k] = [v]
 		ex_proc += 1
 		if ex_proc % 100 == 0: print 'Examples processed: %d' % ex_proc
-		if limit != 0 and ex_proc > limit: break
 	
 	return results
 
-def train_review(fname, total, ratio):
-	train = int(round(total * ratio))
+def train_review(fname, ratio):
 	rv_trainer = ReviewTrainer()
 	data = load(fname, rv_trainer.preprocess, total)
+	train = len(data['labels']) * ratio
 	x = data['feats']
 	y = data['labels']
 	rv_trainer.prepare_data(x[:train], y[:train])
@@ -39,18 +41,19 @@ def train_review(fname, total, ratio):
 	print rv_trainer.get_error(pred, y[train:])
 
 def train_business(fname, total, ratio):
-	train = int(round(total * ratio))
 	biz_trainer = BusinessTrainer()
 	data = load(fname, biz_trainer.preprocess,total)
+	grouped_labels = biz_trainer.group_labels(FNAME_REVIEWS)		
+	examples = biz_trainer.build_examples(data, grouped_labels)
+	train = len(examples['labels']) * ratio
 
-
+	
 def main():
 	fname = sys.argv[1]
-	total = int(sys.argv[2])
 	ratio = float(sys.argv[3])
 
-	#train_review(fname, total, ratio)
-	train_business(fname, total, ratio)
+	#train_review(fname, ratio)
+	train_business(fname, ratio)
 
 if __name__ == '__main__':
 	main()
