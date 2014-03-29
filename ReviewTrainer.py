@@ -1,3 +1,6 @@
+'''
+Classifier based on the review content.
+'''
 import sys
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -6,7 +9,7 @@ from sklearn.linear_model import Ridge
 from sklearn.feature_selection import SelectKBest, chi2, f_classif
 import numpy as np
 
-class ReviewTrainer(object):
+class ReviewTrainer(TrainerModel):
 
 	def preprocess(self, l):
 		sw = stopwords.words('english')

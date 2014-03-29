@@ -1,4 +1,8 @@
-clas TrainerModel(object):
+'''
+Base class for trainers
+'''
+
+class TrainerModel(object):
 	def preprocess(self):
 		raise NotImplementedError
 	def train(self):
