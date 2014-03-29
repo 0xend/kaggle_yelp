@@ -17,7 +17,7 @@ class ReviewTrainer(TrainerModel):
 	def preprocess(self, l):
 		sw = stopwords.words('english')
 		clean = ' '.join([w for w in l['text'].split() if w not in sw])
-		return {'text' : clean, 'votes' : l['votes']['useful']}
+		return {'feats' : clean, 'labels' : l['votes']['useful']}
 	
 	def prepare_data(self, x, y):
 		self.hv = HashingVectorizer(strip_accents='ascii', non_negative=True)

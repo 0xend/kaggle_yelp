@@ -6,6 +6,7 @@ Author: Eric Denovitzer
 
 '''
 from ReviewTrainer import *
+from BusinessTrainer import *
 import sys
 import json
 
@@ -26,19 +27,30 @@ def load(fname, prep, limit=0):
 	
 	return results
 
-def main():
-	total = int(sys.argv[2])
-	ratio = float(sys.argv[3])
-
-	train = int(round(total*ratio))
+def train_review(fname, total, ratio):
+	train = int(round(total * ratio))
 	rv_trainer = ReviewTrainer()
-	data = load(sys.argv[1], rv_trainer.preprocess, total)
-	x = data['text']
-	y = data['votes']
+	data = load(fname, rv_trainer.preprocess, total)
+	x = data['feats']
+	y = data['labels']
 	rv_trainer.prepare_data(x[:train], y[:train])
 	rv_trainer.train()
 	pred = rv_trainer.predict(x[train:])
 	print rv_trainer.get_error(pred, y[train:])
+
+def train_business(fname, total, ratio):
+	train = int(round(total * ratio))
+	biz_trainer = BusinessTrainer()
+	data = load(fname, biz_trainer.preprocess,total)
+
+
+def main():
+	fname = sys.argv[1]
+	total = int(sys.argv[2])
+	ratio = float(sys.argv[3])
+
+	#train_review(fname, total, ratio)
+	train_business(fname, total, ratio)
 
 if __name__ == '__main__':
 	main()
