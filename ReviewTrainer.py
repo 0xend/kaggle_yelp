@@ -1,6 +1,7 @@
 '''
 Classifier based on the review content.
 '''
+from TrainerModel import TrainerModel
 import sys
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import HashingVectorizer
@@ -10,6 +11,8 @@ from sklearn.feature_selection import SelectKBest, chi2, f_classif
 import numpy as np
 
 class ReviewTrainer(TrainerModel):
+	def __init__(self):
+		pass
 
 	def preprocess(self, l):
 		sw = stopwords.words('english')
