@@ -19,22 +19,20 @@ def load(fname, prep, limit=0):
 	ex_proc = 0
 	for line in f:
 		js = json.loads(line)
-		for k,v in prep(js).items():
-			try:
-				results[k].append(v)
-			except KeyError:
-				results[k] = [v]
+		for k,v in  prep(js).items():
+			results[k] = v
 		ex_proc += 1
-		if ex_proc % 100 == 0: print 'Examples processed: %d' % ex_proc
-	
+		if ex_proc % 100 == 0: 
+			print 'Examples processed: %d' % ex_proc
 	return results
 
 def train_review(fname, ratio):
 	rv_trainer = ReviewTrainer()
 	data = load(fname, rv_trainer.preprocess)
-	train = int(len(data['labels']) * ratio)
-	x = data['feats']
-	y = data['labels']
+	examples = rv_trainer.build_examples(data)
+	train = int(len(examples['labels']) * ratio)
+	x = examples['feats']
+	y = examples['labels']
 	rv_trainer.prepare_data(x[:train], y[:train])
 	rv_trainer.train()
 	pred = rv_trainer.predict(x[train:])
@@ -46,14 +44,20 @@ def train_business(fname, ratio):
 	grouped_labels = biz_trainer.group_labels(FNAME_REVIEWS)		
 	examples = biz_trainer.build_examples(data, grouped_labels)
 	train = int(len(examples['labels']) * ratio)
+	x = examples['feats']
+	y = examples['labels']
+	biz_trainer.prepare_data(x[:train], y[:train])
+	biz_trainer.train()
+	pred = rv_trainer.predict(x[train:])
+	print rv_trainer.get_error(pred, y[train:])
 
 	
 def main():
 	fname = sys.argv[1]
 	ratio = float(sys.argv[3])
 
-	train_review(fname, ratio)
-	#train_business(fname, ratio)
+	#train_review(fname, ratio)
+	train_business(fname, ratio)
 
 
 if __name__ == '__main__':
