@@ -10,6 +10,8 @@ from sklearn.linear_model import Ridge
 from sklearn.feature_selection import SelectKBest, chi2, f_classif
 import numpy as np
 
+K_FEAT = 15000
+
 class ReviewTrainer(TrainerModel):
 	def __init__(self):
 		pass
@@ -24,7 +26,7 @@ class ReviewTrainer(TrainerModel):
 		self.feats = self.hv.transform(x)
 		self.labels = np.array(y)
 		
-		self.ch2 = SelectKBest(chi2, k=15000)
+		self.ch2 = SelectKBest(chi2, k=K_FEAT)
 		self.feats = self.ch2.fit_transform(self.feats, self.labels)
 		
 	def get_error(self, pred, y):

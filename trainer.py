@@ -31,8 +31,8 @@ def load(fname, prep, limit=0):
 
 def train_review(fname, ratio):
 	rv_trainer = ReviewTrainer()
-	data = load(fname, rv_trainer.preprocess, total)
-	train = len(data['labels']) * ratio
+	data = load(fname, rv_trainer.preprocess)
+	train = int(len(data['labels']) * ratio)
 	x = data['feats']
 	y = data['labels']
 	rv_trainer.prepare_data(x[:train], y[:train])
@@ -40,20 +40,21 @@ def train_review(fname, ratio):
 	pred = rv_trainer.predict(x[train:])
 	print rv_trainer.get_error(pred, y[train:])
 
-def train_business(fname, total, ratio):
+def train_business(fname, ratio):
 	biz_trainer = BusinessTrainer()
-	data = load(fname, biz_trainer.preprocess,total)
+	data = load(fname, biz_trainer.preprocess)
 	grouped_labels = biz_trainer.group_labels(FNAME_REVIEWS)		
 	examples = biz_trainer.build_examples(data, grouped_labels)
-	train = len(examples['labels']) * ratio
+	train = int(len(examples['labels']) * ratio)
 
 	
 def main():
 	fname = sys.argv[1]
 	ratio = float(sys.argv[3])
 
-	#train_review(fname, ratio)
-	train_business(fname, ratio)
+	train_review(fname, ratio)
+	#train_business(fname, ratio)
+
 
 if __name__ == '__main__':
 	main()
