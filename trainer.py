@@ -1,12 +1,14 @@
 '''
 
 Author: Eric Denovitzer
-~ python <file_name> <limit_examples> <ratio>
+~ ./trainer.py <file_name> <limit_examples> <ratio>
 
 
 '''
 from ReviewTrainer import *
 from BusinessTrainer import *
+from UserTrainer import *
+from sklearn.externals import joblib
 import sys
 import json
 import logging
@@ -49,19 +51,29 @@ def prepare_trainer(fname, ratio, clf, labels_ready = False):
 
 def train_review(fname, ratio):
 	rev_trainer, err = prepare_trainer(fname, ratio, ReviewTrainer(), True)
-	logging.info('Business predictor error: %f' % err)
+	logging.info('Review predictor error: %f' % err)
+	return rev_trainer
 
 def train_business(fname, ratio):
 	biz_trainer, err = prepare_trainer(fname, ratio,BusinessTrainer())
 	logging.info('Business predictor error: %f' % err)
+	return biz_trainer
+	
+def train_user(fname, ratio):
+	user_trainer, err = prepare_trainer(fname, ratio, UserTrainer())
+	logging.info('User predictor error: %f' % err)
+	return user_trainer
+	
+def experts_trainer(models, exs, labels):
+	pass
 
 def main():
 	fname = sys.argv[1]
 	ratio = float(sys.argv[2])
 
-	train_review(fname, ratio)
+	#train_review(fname, ratio)
 	#train_business(fname, ratio)
-
+	train_user(fname, ratio)
 
 if __name__ == '__main__':
 	main()

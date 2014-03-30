@@ -42,6 +42,8 @@ class BusinessTrainer(TrainerModel):
 		labels = []
 		ex = {}
 		for id, votes in revs.items():
+			if id not in biz:
+				continue
 			X = biz[id]
 			feat = {'city' : X['city'], 'state' : X['state'], 
 				'count' : X['review_count'], 'open' : X['open'],
