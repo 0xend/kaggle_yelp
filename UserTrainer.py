@@ -25,7 +25,7 @@ class UserTrainer(TrainerModel):
 		return super(UserTrainer, self).get_error(pred,y)
 
 	def _cross_validate(self, **extra):
-		grid = dict(n_estimators=[10, 50, 100, 200])
+		grid = dict(n_estimators=[10, 50, 100])
 		return super(UserTrainer, self)._cross_validate_base(
 			RandomForestRegressor(), grid)
 
