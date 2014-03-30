@@ -54,7 +54,7 @@ def train_business(fname, ratio):
 	
 def main():
 	fname = sys.argv[1]
-	ratio = float(sys.argv[3])
+	ratio = float(sys.argv[2])
 
 	#train_review(fname, ratio)
 	train_business(fname, ratio)

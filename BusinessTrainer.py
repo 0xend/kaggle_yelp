@@ -5,7 +5,8 @@ import numpy as np
 from TrainerModel import TrainerModel
 from sklearn import svm
 from sklearn.cross_validation import KFold
-from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.svm import SVR
 
 class BusinessTrainer(TrainerModel):
 	def __init__(self):
@@ -20,13 +21,12 @@ class BusinessTrainer(TrainerModel):
 		return res
 
 	def get_error(self, pred, y):
-		return super(ReviewTrainer, self).get_error(pred,y)
+		return super(BusinessTrainer, self).get_error(pred,y)
 
 	def _cross_validate(self, **extra):
-		args = extra.items()
 		values = [0.0001, 0.001, 0.01, 0.1, 1]
 		return super(BusinessTrainer, self)._cross_validate_base(
-			SVC, args, 'C', values)
+			SVR, extra, 'C', values)
 
 	def group_labels(self, fname):
 		return super(BusinessTrainer, self).group_labels(fname, 'business_id')
@@ -37,9 +37,9 @@ class BusinessTrainer(TrainerModel):
 		ex = {}
 		for id, votes in revs.items():
 			X = biz[id]
-			feats.append([
-				X['city'], X['state'],
-				X['review_count'], X['open']])
+			feats.append({
+				'city' : X['city'], 'state' : X['state'],
+				'count' : X['review_count'], 'open' : X['open']})
 			labels.append(votes)
 		ex['feats'] = feats
 		ex['labels'] = labels
@@ -55,13 +55,17 @@ class BusinessTrainer(TrainerModel):
 		poly, poly_score = self._cross_validate(kernel='poly')
 		clfs = [linear, rbf, poly]
 		scores = [linear_score, rbf_score, poly_score]
+		print scores
 		max_index = scores.index(max(scores))
 		self.clf = clfs[max_index]
 
 	def prepare_data(self, x, y):
-		self.hv = HashingVectorizer(non_negative=True)
-		self.feats = self.hv.transform(x)
-		self.labels = np.array(y)
+		self.dv = DictVectorizer(sparse=False)
+		self.feats = self.dv.fit_transform(x)
+		avg_y = []
+		for labels in y:
+			avg_y.append(sum(labels)/len(labels))
+		self.labels = np.array(avg_y)
 		
 
 	def predict(self, data):
