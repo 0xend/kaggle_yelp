@@ -23,6 +23,9 @@ class ReviewTrainer(TrainerModel):
 		res[l['review_id']] = {'text' : clean, 'label' : l['votes']['useful']}
 		return res
 
+	def group_labels(self, fname):
+		pass
+
 	def prepare_data(self, x, y):
 		self.hv = HashingVectorizer(strip_accents='ascii', non_negative=True)
 		self.feats = self.hv.transform(x)
@@ -39,8 +42,7 @@ class ReviewTrainer(TrainerModel):
 		return super(ReviewTrainer, self)._cross_validate_base(
 			Ridge(), grid) 
 	
-	def build_examples(self, data):
-		print data
+	def build_examples(self, data, labels=None):
 		feats = []
 		labels = []
 		ex = {}

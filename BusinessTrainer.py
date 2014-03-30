@@ -7,6 +7,10 @@ from sklearn import svm
 from sklearn.cross_validation import KFold
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import SVR
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(message)s')
 
 class BusinessTrainer(TrainerModel):
 	def __init__(self):
@@ -24,8 +28,8 @@ class BusinessTrainer(TrainerModel):
 		return super(BusinessTrainer, self).get_error(pred,y)
 
 	def _cross_validate(self, **extra):
-		C_range = 10.0 ** np.arange(-3, 2)
-		gamma_range = 10.0 ** np.arange(-3, 2)
+		C_range = 10.0 ** np.arange(-1, 5)
+		gamma_range = 10.0 ** np.arange(-3, 1)
 		grid = dict(gamma=gamma_range, C=C_range)
 		return super(BusinessTrainer, self)._cross_validate_base(
 			SVR(), grid)
@@ -39,26 +43,27 @@ class BusinessTrainer(TrainerModel):
 		ex = {}
 		for id, votes in revs.items():
 			X = biz[id]
-			feats.append({
-				'city' : X['city'], 'state' : X['state'],
-				'count' : X['review_count'], 'open' : X['open']})
-			labels.append(votes)
+			feat = {'city' : X['city'], 'state' : X['state'], 
+				'count' : X['review_count'], 'open' : X['open'],
+				'stars' : X['stars']}
+			for cat in X['categories']:
+				feat['cat-%s' % cat] = True
+			feats.append(feat)	
+			labels.append(sum(votes)/len(votes))
 		ex['feats'] = feats
 		ex['labels'] = labels
 		return ex
 
 
 	def train(self):	
-		self.clf = self._cross_validate()
+		iself.clf = self._cross_validate()
+		#self.clf = SVR()
 		self.clf.fit(self.feats, self.labels)
 
 	def prepare_data(self, x, y):
-		self.dv = DictVectorizer(sparse=False)
+		self.dv = DictVectorizer()
 		self.feats = self.dv.fit_transform(x)
-		avg_y = []
-		for labels in y:
-			avg_y.append(sum(labels)/len(labels))
-		self.labels = np.array(avg_y)
+		self.labels = np.array(y)
 		
 
 	def predict(self, data):

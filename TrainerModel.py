@@ -19,11 +19,11 @@ class TrainerModel(object):
 		total = len(pred)
 		for i in range(0,len(pred)):
 			p = round(int(pred[i]))
-			dif +=  abs(round(int(pred[i]))-int(y[i]))	
+			dif +=  abs(round(int(pred[i]))-int(round(y[i])))	
 		return dif/total
 	
 	def _cross_validate_base(self, model, grid):
-		cv = KFold(n=len(self.labels), n_folds=10, indices=True)
+		cv = KFold(n=len(self.labels), n_folds=3, indices=True)
 		model = GridSearchCV(model, param_grid=grid, cv=cv)
 		return model
 	
@@ -41,7 +41,7 @@ class TrainerModel(object):
 				labels[js[field]] = [js['votes']['useful']]
 		return labels
 	
-	def build_examples(self, *args):
+	def build_examples(self, feats, labels):
 		raise NotImplementedError
 	
 	def train(self):
