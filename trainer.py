@@ -48,8 +48,8 @@ def train_business(fname, ratio):
 	y = examples['labels']
 	biz_trainer.prepare_data(x[:train], y[:train])
 	biz_trainer.train()
-	pred = rv_trainer.predict(x[train:])
-	print rv_trainer.get_error(pred, y[train:])
+	pred = biz_trainer.predict(x[train:])
+	print biz_trainer.get_error(pred, y[train:])
 
  
 

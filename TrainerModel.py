@@ -23,9 +23,9 @@ class TrainerModel(object):
 		return dif/total
 	
 	def _cross_validate_base(self, model, grid):
-		cv = KFold(n=len(self.labels), n_folds=2, indices=True)
+		cv = KFold(n=len(self.labels), n_folds=10, indices=True)
 		model = GridSearchCV(model, param_grid=grid, cv=cv)
-		return model.fit(X, Y)
+		return model
 	
 	def _cross_validate(self, **extra):
 		raise NotImplementedError

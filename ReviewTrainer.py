@@ -34,7 +34,7 @@ class ReviewTrainer(TrainerModel):
 	def get_error(self, pred, y):
 		return super(ReviewTrainer, self).get_error(pred,y)
 	
-	def _cross_validate(self, **extra):
+	def _cross_validate(self):
 		grid = dict(alpha=10.0 ** np.arange(-4,1))
 		return super(ReviewTrainer, self)._cross_validate_base(
 			Ridge(), grid) 
@@ -52,7 +52,7 @@ class ReviewTrainer(TrainerModel):
 		return ex
 
 	def train(self):
-		self.clf, self.best_score  = self._cross_validate()
+		self.clf = self._cross_validate()
 		self.clf.fit(self.feats, self.labels)
 
 	def predict(self, data):

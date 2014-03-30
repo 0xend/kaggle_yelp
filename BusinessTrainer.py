@@ -25,7 +25,7 @@ class BusinessTrainer(TrainerModel):
 
 	def _cross_validate(self, **extra):
 		C_range = 10.0 ** np.arange(-3, 2)
-		gamma_range = 10.0 ** np.arange(-4, 3)
+		gamma_range = 10.0 ** np.arange(-3, 2)
 		grid = dict(gamma=gamma_range, C=C_range)
 		return super(BusinessTrainer, self)._cross_validate_base(
 			SVR(), grid)
@@ -49,7 +49,8 @@ class BusinessTrainer(TrainerModel):
 
 
 	def train(self):	
-		pass
+		self.clf = self._cross_validate()
+		self.clf.fit(self.feats, self.labels)
 
 	def prepare_data(self, x, y):
 		self.dv = DictVectorizer(sparse=False)
