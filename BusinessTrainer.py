@@ -24,7 +24,7 @@ class BusinessTrainer(TrainerModel):
 		return super(BusinessTrainer, self).get_error(pred,y)
 
 	def _cross_validate(self, **extra):
-		values = [0.0001, 0.001, 0.01, 0.1, 1]
+		values = [1]
 		return super(BusinessTrainer, self)._cross_validate_base(
 			SVR, extra, 'C', values)
 
@@ -69,4 +69,7 @@ class BusinessTrainer(TrainerModel):
 		
 
 	def predict(self, data):
-		pass
+		data = self.dv.transform(data)
+		pred = self.clf.predict(data)
+		return pred			
+

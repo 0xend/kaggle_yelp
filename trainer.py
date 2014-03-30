@@ -51,7 +51,8 @@ def train_business(fname, ratio):
 	pred = rv_trainer.predict(x[train:])
 	print rv_trainer.get_error(pred, y[train:])
 
-	
+ 
+
 def main():
 	fname = sys.argv[1]
 	ratio = float(sys.argv[2])

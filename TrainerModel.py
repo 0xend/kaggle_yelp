@@ -6,6 +6,7 @@ import json
 import sys
 from sklearn.cross_validation import KFold
 
+
 class TrainerModel(object):
 	def __init__(self):
 		pass
@@ -29,6 +30,7 @@ class TrainerModel(object):
 			params[opt] = v
 			clf = model(**params)
 			values = []
+			print clf
 			for train, test in kfold:
 				clf.fit(self.feats[train], self.labels[train])
 				pred = clf.predict(self.feats[test])
@@ -59,6 +61,6 @@ class TrainerModel(object):
 	def train(self):
 		raise NotImplementedError
 	
-	def predict(self):
+	def predict(self, data):
 		raise NotImplementedError
 	
