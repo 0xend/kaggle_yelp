@@ -24,9 +24,11 @@ class BusinessTrainer(TrainerModel):
 		return super(BusinessTrainer, self).get_error(pred,y)
 
 	def _cross_validate(self, **extra):
-		values = [1]
+		C_range = 10.0 ** np.arange(-3, 2)
+		gamma_range = 10.0 ** np.arange(-4, 3)
+		grid = dict(gamma=gamma_range, C=C_range)
 		return super(BusinessTrainer, self)._cross_validate_base(
-			SVR, extra, 'C', values)
+			SVR(), grid)
 
 	def group_labels(self, fname):
 		return super(BusinessTrainer, self).group_labels(fname, 'business_id')
@@ -46,18 +48,8 @@ class BusinessTrainer(TrainerModel):
 		return ex
 
 
-	def train(self):
-		print 'LINEAR'
-		linear, linear_score = self._cross_validate(kernel='linear')	
-		print 'RBF'
-		rbf, rbf_score = self._cross_validate(kernel='rbf')
-		print 'Poly'
-		poly, poly_score = self._cross_validate(kernel='poly')
-		clfs = [linear, rbf, poly]
-		scores = [linear_score, rbf_score, poly_score]
-		print scores
-		max_index = scores.index(max(scores))
-		self.clf = clfs[max_index]
+	def train(self):	
+		pass
 
 	def prepare_data(self, x, y):
 		self.dv = DictVectorizer(sparse=False)

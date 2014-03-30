@@ -35,9 +35,9 @@ class ReviewTrainer(TrainerModel):
 		return super(ReviewTrainer, self).get_error(pred,y)
 	
 	def _cross_validate(self, **extra):
-		values = [0.001, 0.01, 0.1, 1, 10]
+		grid = dict(alpha=10.0 ** np.arange(-4,1))
 		return super(ReviewTrainer, self)._cross_validate_base(
-			Ridge,{}, 'alpha', values) 
+			Ridge(), grid) 
 	
 	def build_examples(self, data):
 		print data

@@ -5,7 +5,7 @@ Base class for trainers
 import json
 import sys
 from sklearn.cross_validation import KFold
-
+from sklearn.grid_search import GridSearchCV
 
 class TrainerModel(object):
 	def __init__(self):
@@ -22,24 +22,10 @@ class TrainerModel(object):
 			dif +=  abs(round(int(pred[i]))-int(y[i]))	
 		return dif/total
 	
-	def _cross_validate_base(self, model, params, opt, values):
-		best_score = sys.float_info.max
-		best_clf = None
-		kfold = KFold(n=len(self.labels), n_folds=10, indices=True)
-		for v in values:
-			params[opt] = v
-			clf = model(**params)
-			values = []
-			print clf
-			for train, test in kfold:
-				clf.fit(self.feats[train], self.labels[train])
-				pred = clf.predict(self.feats[test])
-				values.append(self.get_error(pred, self.labels[test]))
-			avg = sum(values)/len(values)
-			if avg < best_score:
-				best_clf = clf
-				best_score = avg
-		return (best_clf, best_score)
+	def _cross_validate_base(self, model, grid):
+		cv = KFold(n=len(self.labels), n_folds=2, indices=True)
+		model = GridSearchCV(model, param_grid=grid, cv=cv)
+		return model.fit(X, Y)
 	
 	def _cross_validate(self, **extra):
 		raise NotImplementedError
