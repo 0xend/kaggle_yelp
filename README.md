@@ -20,7 +20,7 @@ this method will likely still be useful since it's parallelizable.
 *For business and user, the number of useful votes (label) is given by the average of all
 examples seen for such biz/user. Another approach that is worth trying is instead of constructing just
 using y(X_i) = avg(y_i), build n examples (given that we have n labels for example X_i. For instance:
-if we have for X_i, the labels [1, 0, 2], instead of having y(X_i) = 2, build three examples (one
+if we have for X_i, the labels [1, 0, 2], instead of having y(X_i) = 1, build three examples (one
 for each label).
 
 
