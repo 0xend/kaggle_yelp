@@ -23,6 +23,7 @@ using y(X_i) = avg(y_j), build n examples (given that we have n labels for examp
 if we have for X_i, the labels [1, 0, 2], instead of having y(X_i) = 2, build three examples (one
 for each label).
 
+
 To run it:
 ./trainer.py <ratio>
 
