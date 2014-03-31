@@ -59,8 +59,6 @@ def train_user(fname, ratio):
 	logging.info('User predictor error: %f' % err)
 	return user_trainer
 	
-def experts_trainer(models, exs, labels):
-	pass
 
 def main():
 	parser = argparse.ArgumentParser()
