@@ -26,7 +26,6 @@ def load(fname, prep, limit=0):
 		ex_proc += 1
 		if ex_proc % 1000 == 0: 
 			logging.info('Examples processed: %d' % ex_proc)
-		if ex_proc > 1000: break
 	return results
 
 def prepare_trainer(fname, ratio, clf, labels_ready = False):
@@ -67,6 +66,7 @@ def main():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("ratio", type=float, help="Ratio of training:test")
 	parser.add_argument("--load", help="Loads models from saved files.")
+	parser.add_argument("--save", help="Save trained models.")
 	args = parser.parse_args()
 	ratio = args.ratio
 	if args.load:
@@ -74,10 +74,14 @@ def main():
 		biz_trainer = joblib.load(cons.BIZ_MODEL)
 		user_trainer = joblib.load(cons.USER_MODEL)
 	else:
-		train_review(cons.FNAME_REVIEW, ratio)
-		train_business(cons.FNAME_BUSINESS, ratio)
-		train_user(cons.FNAME_USER, ratio)
+		rev_trainer = train_review(cons.FNAME_REVIEW, ratio)
+		biz_trainer = train_business(cons.FNAME_BUSINESS, ratio)
+		user_trainer = train_user(cons.FNAME_USER, ratio)
 
-	
+	if args.save:
+		rev_trainer.save()
+		biz_trainer.save()
+		user_trainer.save()
+
 if __name__ == '__main__':
 	main()

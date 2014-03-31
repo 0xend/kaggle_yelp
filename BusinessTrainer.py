@@ -58,7 +58,7 @@ class BusinessTrainer(TrainerModel):
 
 
 	def train(self):	
-		iself.clf = self._cross_validate()
+		self.clf = self._cross_validate()
 		#self.clf = SVR()
 		self.clf.fit(self.feats, self.labels)
 
