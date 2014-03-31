@@ -15,7 +15,8 @@ logging.basicConfig(level=logging.INFO,
 class BusinessTrainer(TrainerModel):
 	def __init__(self):
 		pass
-	
+
+	#keeps useful fields from those in the file
 	def preprocess(self, l):
 		res = {}
 		biz_id = l['business_id']
@@ -27,16 +28,19 @@ class BusinessTrainer(TrainerModel):
 	def get_error(self, pred, y):
 		return super(BusinessTrainer, self).get_error(pred,y)
 
+	#uses CV to optimize for C and gamma
 	def _cross_validate(self, **extra):
 		C_range = 10.0 ** np.arange(-1, 5)
 		gamma_range = 10.0 ** np.arange(-3, 1)
 		grid = dict(gamma=gamma_range, C=C_range)
 		return super(BusinessTrainer, self)._cross_validate_base(
 			SVR(), grid)
-
+	
 	def group_labels(self, fname):
 		return super(BusinessTrainer, self).group_labels(fname, 'business_id')
 
+	#formats examples to feed trainer. 
+	#MUST BE CALLED BEFORE train
 	def build_examples(self, biz, revs):
 		feats = []
 		labels = []
@@ -56,18 +60,18 @@ class BusinessTrainer(TrainerModel):
 		ex['labels'] = labels
 		return ex
 
-
+	#fits model using optimal parameters
 	def train(self):	
 		self.clf = self._cross_validate()
-		#self.clf = SVR()
 		self.clf.fit(self.feats, self.labels)
 
+	#Vectorizes the data
 	def prepare_data(self, x, y):
 		self.dv = DictVectorizer()
 		self.feats = self.dv.fit_transform(x)
 		self.labels = np.array(y)
 		
-
+	#Predicts Y given X  
 	def predict(self, data):
 		data = self.dv.transform(data)
 		pred = self.clf.predict(data)

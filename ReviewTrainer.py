@@ -16,6 +16,7 @@ class ReviewTrainer(TrainerModel):
 	def __init__(self):
 		pass
 
+	#get rids of stopwords
 	def preprocess(self, l):
 		res = {}
 		sw = stopwords.words('english')
@@ -23,9 +24,11 @@ class ReviewTrainer(TrainerModel):
 		res[l['review_id']] = {'text' : clean, 'label' : l['votes']['useful']}
 		return res
 
+	#the labels are already given for this review
 	def group_labels(self, fname):
 		pass
 
+	#vectorizes data and selects K best feats.
 	def prepare_data(self, x, y):
 		self.hv = HashingVectorizer(strip_accents='ascii', non_negative=True)
 		self.feats = self.hv.transform(x)
@@ -37,11 +40,14 @@ class ReviewTrainer(TrainerModel):
 	def get_error(self, pred, y):
 		return super(ReviewTrainer, self).get_error(pred,y)
 	
+	#optimizes for hyper-parameter alpha
 	def _cross_validate(self):
 		grid = dict(alpha=10.0 ** np.arange(-4,1))
 		return super(ReviewTrainer, self)._cross_validate_base(
 			Ridge(), grid) 
 	
+	#builds examples to feed trainer
+	#MUST RUN BEFORE train
 	def build_examples(self, data, labels=None):
 		feats = []
 		labels = []
@@ -53,10 +59,12 @@ class ReviewTrainer(TrainerModel):
 		ex['labels'] = labels
 		return ex
 
+	#fits model using optimal parameters
 	def train(self):
 		self.clf = self._cross_validate()
 		self.clf.fit(self.feats, self.labels)
 
+	#predicts Y given X
 	def predict(self, data):
 		data = self.hv.transform(data)
 		data = self.ch2.transform(data)

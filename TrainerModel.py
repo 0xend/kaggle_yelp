@@ -13,9 +13,11 @@ class TrainerModel(object):
 	def __init__(self):
 		pass
 
+	#implemented in child
 	def preprocess(self, l):
 		raise NotImplementedError
 	
+	#Use absolute dif between pred_i and y_i
 	def get_error(self, pred, y):
 		dif = 0
 		total = len(pred)
@@ -24,14 +26,17 @@ class TrainerModel(object):
 			dif +=  abs(round(int(pred[i]))-int(round(y[i])))	
 		return dif/total
 	
+	#Use KFold to optimize hyper parameters.
 	def _cross_validate_base(self, model, grid):
 		cv = KFold(n=len(self.labels), n_folds=cons.N_FOLDS, indices=True)
 		model = GridSearchCV(model, param_grid=grid, cv=cv)
 		return model
 	
+	#implemented in child
 	def _cross_validate(self, **extra):
 		raise NotImplementedError
 	
+	#group labels for each example
 	def group_labels(self, fname, field):
 		f = open(fname)
 		labels = {}
@@ -43,15 +48,21 @@ class TrainerModel(object):
 				labels[js[field]] = [js['votes']['useful']]
 		return labels
 	
+	
+	#implemented in child
 	def build_examples(self, feats, labels):
 		raise NotImplementedError
-	
+
+
+	#implemented in child
 	def train(self):
 		raise NotImplementedError
 	
+	#implemented in child
 	def predict(self, data):
 		raise NotImplementedError
-	
+
+	#saves the model to disk
 	def save(self):
 		name =self.__class__.__name__			
-		_ = joblib.dump(self, '%s.model' % name, compress=9)
+		_ = joblib.dump(self, 'models/%s.model' % name, compress=9)
