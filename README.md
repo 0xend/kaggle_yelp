@@ -30,7 +30,10 @@ To run it:
 
 TODO:
 
-Use learning with experts advice such that each model mentioned above represents one of the experts.
+- Incorporate check-ins info to the models.
+- Use learning with experts advice such that each model mentioned above represents one of the experts.
 I anticipate the performance should be at least as good as that of the best model if not better since
 each of them is using different attributes which means the information they provide can add up 
 together (the overlapping of information provided by the models shouldn't be 'too high').
+
+
