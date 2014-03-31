@@ -8,17 +8,12 @@ Author: Eric Denovitzer
 from ReviewTrainer import *
 from BusinessTrainer import *
 from UserTrainer import *
-from sklearn.externals import joblib
-import sys
 import json
 import logging
-
+import argparse
+import constants as cons
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s')
-
-
-FNAME_REVIEWS = u'yelp_training_set_review.json'
-
 
 def load(fname, prep, limit=0):
 	f = open(fname)
@@ -31,6 +26,7 @@ def load(fname, prep, limit=0):
 		ex_proc += 1
 		if ex_proc % 1000 == 0: 
 			logging.info('Examples processed: %d' % ex_proc)
+		if ex_proc > 1000: break
 	return results
 
 def prepare_trainer(fname, ratio, clf, labels_ready = False):
@@ -38,7 +34,7 @@ def prepare_trainer(fname, ratio, clf, labels_ready = False):
 	if labels_ready:
 		grouped_labels = None
 	else:
-		grouped_labels = clf.group_labels(FNAME_REVIEWS)		
+		grouped_labels = clf.group_labels(cons.FNAME_REVIEW)		
 	examples = clf.build_examples(data, grouped_labels)
 	train = int(len(examples['labels']) * ratio)
 	x = examples['feats']
@@ -68,12 +64,20 @@ def experts_trainer(models, exs, labels):
 	pass
 
 def main():
-	fname = sys.argv[1]
-	ratio = float(sys.argv[2])
+	parser = argparse.ArgumentParser()
+	parser.add_argument("ratio", type=float, help="Ratio of training:test")
+	parser.add_argument("--load", help="Loads models from saved files.")
+	args = parser.parse_args()
+	ratio = args.ratio
+	if args.load:
+		rev_trainer = joblib.load(cons.REV_MODEL)
+		biz_trainer = joblib.load(cons.BIZ_MODEL)
+		user_trainer = joblib.load(cons.USER_MODEL)
+	else:
+		train_review(cons.FNAME_REVIEW, ratio)
+		train_business(cons.FNAME_BUSINESS, ratio)
+		train_user(cons.FNAME_USER, ratio)
 
-	#train_review(fname, ratio)
-	#train_business(fname, ratio)
-	train_user(fname, ratio)
-
+	
 if __name__ == '__main__':
 	main()

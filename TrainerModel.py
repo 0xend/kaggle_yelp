@@ -4,8 +4,10 @@ Base class for trainers
 
 import json
 import sys
+import constants as cons
 from sklearn.cross_validation import KFold
 from sklearn.grid_search import GridSearchCV
+from sklearn.externals import joblib
 
 class TrainerModel(object):
 	def __init__(self):
@@ -23,7 +25,7 @@ class TrainerModel(object):
 		return dif/total
 	
 	def _cross_validate_base(self, model, grid):
-		cv = KFold(n=len(self.labels), n_folds=10, indices=True)
+		cv = KFold(n=len(self.labels), n_folds=cons.N_FOLDS, indices=True)
 		model = GridSearchCV(model, param_grid=grid, cv=cv)
 		return model
 	
@@ -50,3 +52,6 @@ class TrainerModel(object):
 	def predict(self, data):
 		raise NotImplementedError
 	
+	def save(self):
+		name =self.__class__.__name__			
+		_ = joblib.dump(self, '%s.model' % name, compress=9)
